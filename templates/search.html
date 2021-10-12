@@ -33,7 +33,7 @@ Users
 {{ form.search.label(class="form-label") }}
 
 <input type="text" id="search" class="form-control" placeholder="Search" autocomplete="off" oninput="myFunction()">
-<br>
+<br id="border">
 
 <table class="table table-hover table-bordered table-striped sortable" id="users">
 	
@@ -80,7 +80,8 @@ Users
 {% endif %}
 
 <script>
-    var table = document.getElementById('users');
+    let table = document.getElementById('users');
+    const input_place = document.getElementById('border');
     let u_name = []
     let email = []
     var length = table.rows.length;
@@ -88,21 +89,24 @@ Users
         u_name.push(table.rows[i].cells[1].innerText);
         email.push(table.rows[i].cells[2].innerText);
     };
+    
 	function myFunction() {
+        var tab = document.getElementById('users');
+        tab.remove()
+        input_place.insertAdjacentHTML('afterEnd', table.outerHTML)
+        var tab = document.getElementById('users');
         document.getElementById('clear').style.display = 'table-row'
         var x = document.getElementById("search").value.toLowerCase();
         var type = document.getElementById("select").value;
-        // alert(email)
         if (type === '1'){
             var u_searched = u_name.filter(name => name.toLowerCase().includes(x))
             // document.getElementById('label').innerHTML = type+u_searched;
             for (let j = 0; j < u_name.length; j++){
                 if (u_searched.includes(u_name[j])){
-                    document.getElementById(u_name[j]).style.display = 'table-row';
                     document.getElementById('noitem').style.display = 'none';
                 }
                 if (!u_searched.includes(u_name[j])){
-                    document.getElementById(u_name[j]).style.display = 'none';
+                    tab.deleteRow(document.getElementById(u_name[j]).rowIndex)
                     document.getElementById('noitem').style.display = 'none';
                 }
                 if (u_searched.length === 0) {
@@ -117,11 +121,10 @@ Users
 
             for (let j = 0; j < email.length; j++){
                 if (e_searched.includes(email[j])){
-                    document.getElementById(u_name[j]).style.display = 'table-row';
                     document.getElementById('noitem').style.display = 'none';
                 }
                 if (!e_searched.includes(email[j])){
-                    document.getElementById(u_name[j]).style.display = 'none';
+                    tab.deleteRow(document.getElementById(u_name[j]).rowIndex)
                     document.getElementById('noitem').style.display = 'none';
                 }
                 if (e_searched.length === 0) {
@@ -140,5 +143,5 @@ Users
             
         }
     }
-	</script>
+</script>
 {% endblock %}
