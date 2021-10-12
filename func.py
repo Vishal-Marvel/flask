@@ -3,23 +3,31 @@ import socket
 import smtplib
 import random
 import math
+import credentials
 from flask_mail import Message
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired
 from app import app, mail
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 def generate_random():
     n = math.floor(random.random()*1000000)
     return str(n)
 
 
-def send_mail(to_mail, code):
-    subject = f"Verification code:{code}"
-    message = "Subject:" + subject + "\n\n" + f'Enter the below code to get verification\n{code}'
+def send_mail(to_mail, template):
+    # message = "Subject:" + "\n\n" + f'Enter the below code to get verification\n{code}'
     try:
+        mes = MIMEMultipart()
+        mes['From'] = credentials.u_name
+        mes['To'] = to_mail
+        mes.attach(MIMEText(template, 'html'))
+        msgBody = mes.as_string()
+
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login('autostock2021@gmail.com', 'autostock@123')
-        server.sendmail('autostock2021@gmail.com', to_mail, message)
+        server.login(credentials.u_name, credentials.passw)
+        server.sendmail(credentials.u_name, to_mail, msgBody)
         server.quit()
     except socket.gaierror:
         pass

@@ -8,7 +8,7 @@ from app import db, user_datastore, app
 from flask_security.utils import encrypt_password, verify_password
 from forms import UserForm, ExtLoginForm, Forgotform, ForgotResetform, Resetform, AuthenticateForm
 import os
-from func import set_activation_limt, generate_random, send_email
+from func import set_activation_limt, generate_random, send_mail
 
 auth = Blueprint('auth', __name__)
 
@@ -56,10 +56,11 @@ def add_user():
             
             role = user_datastore.find_role('user')
             db.session.add(user)
+            # print(user, role)
             user_datastore.add_role_to_user(user, role)
             db.session.commit()
             html = render_template('email.html', code=n, purpose='Sign-in')
-            send_email(user.email, html)
+            send_mail(user.email, html)
             name = form.name.data
             form = UserForm(formdata=None)
             flash(Markup(f"User '{name}' Added Successfully, check your mail to activate user"))
@@ -75,7 +76,7 @@ def resend(id, purpose):
     db.session.commit()
     
     html = render_template('email.html', code=n, purpose=purpose)
-    send_email(user.email, html)
+    send_mail(user.email, html)
     return redirect(url_for('auth.authenticate', id=user.id))
 
 @auth.route('/authenticate/<int:id>', methods=['POST','GET'])
@@ -199,7 +200,7 @@ def forgot():
             user.code_limit = set_activation_limt()
             db.session.commit()
             html = render_template('email.html', code=n, purpose='Forgot Password')
-            send_email(user.email, html)
+            send_mail(user.email, html)
             flash('Verification code is been sent through Mail')
             return redirect(url_for('auth.forgot_password', id=user.id))
     return render_template('security/forgot.html', form=form, purpose='Forgot Password')
@@ -261,7 +262,6 @@ def delete(id):
                 return redirect(url_for('other.index'))
             
         
-
 @auth.route('/delete_all')
 def delete_all():
     db.session.query(Users).delete()

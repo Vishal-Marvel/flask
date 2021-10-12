@@ -8,19 +8,31 @@ Users
 {% include '_messages.html' %}
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <h1>Users: </h1>
-
+<style>
+    .clear{
+        position: absolute;
+        top: 185px;
+        right: 140px;
+        display: none;
+        cursor: pointer;
+    }
+    .fa{
+        font-size: 25px;
+    }
+</style>
 {% if our_users %}
-<form action="{{ url_for('other.users') }}" method="POST">
-	{{ form.hidden_tag() }}
+<span id="label">Search By:</span>
 
-	<span id="select">Search By:</span>
+<select name="select" id="select" onchange="myFunction()">
+    <option value="1">User Name</option>
+    <option value="2">Email Id </option>
+</select>
+<span id="clear" class="clear"><i class="fa fa-times" onclick="reset()"></i></span>
+<!-- <span class="kinda-link" id="clear" onclick="reset()" style="margin-left: 10px;"></span> -->
+<br/>
+{{ form.search.label(class="form-label") }}
 
-	{{ form.select() }} <a href="{{ url_for('other.users') }}">clear filters</a>
-	<br/>
-	{{ form.search.label(class="form-label") }}
-
-	{{ form.search(class="form-control", placeholder="Search") }}
-</form>
+<input type="text" id="search" class="form-control" placeholder="Search" autocomplete="off" oninput="myFunction()">
 <br>
 
 <table class="table table-hover table-bordered table-striped sortable" id="users">
@@ -39,56 +51,27 @@ Users
 		<td><strong>Date Added</strong></td>
 		<td><strong>Actions</strong></td>
 	</tr>
-	{% if searched and users %}
-		{% for our_user in users %}
-		
-		<tr class="item">
-			<td style="text-align:center">{{ our_user.id }}</td>
-			<td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
-			<td>{{ our_user.email }}</td>
-			<td>{{ our_user.date_added }}</td>
-			<td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
-				<a href="{{url_for('auth.update', name=our_user.id)}}">Update</a>
-				<a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
-				<!-- Modal -->
-				 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
-				</div>
-				{%else%}
-				Login To do actions
-				{% endif %}
-			</td>
-		</tr>
-		{% endfor %}
-	{% elif searched and not users %}
-		<td colspan="999">
-			<div class="text-center">
-				No Items Match.
-			</div>
-		</td>
-	
-	{% elif not searched %}
-		{% for our_user in our_users %}
-		<tr class="item">
-			<td style="text-align:center">{{ our_user.id }}</td>
-			<td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
-			<td>{{ our_user.email }}</td>
-			<td>{{ our_user.date_added }}</td>
-			<td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
-				<a href="{{url_for('auth.update', name=our_user.id)}}" >Update</a> ,
-				<a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
-				 <!-- Modal -->
-				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-					<div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
-				</div>
-				{%else%}
-				Login To do actions
-				{% endif %}
-				
-			</td>
-		</tr>
-		{% endfor %}
-	{% endif %}
+    {% for our_user in our_users %}
+    
+    <tr class="item" id="{{our_user.name}}">
+        <td style="text-align:center">{{ our_user.id }}</td>
+        <td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
+        <td>{{ our_user.email }}</td>
+        <td>{{ our_user.date_added }}</td>
+        <td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
+            <a href="{{url_for('auth.update', name=our_user.id)}}">Update</a>
+            <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
+            <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
+            </div>
+            {%else%}
+            Login To do actions
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+	<tr id="noitem" style="display: none;"><td colspan="6" style="text-align:center">No items match</td></tr>
 </table>
 
 {% else %}
@@ -96,4 +79,66 @@ Users
 
 {% endif %}
 
+<script>
+    var table = document.getElementById('users');
+    let u_name = []
+    let email = []
+    var length = table.rows.length;
+    for (let i = 1; i < length; i++){
+        u_name.push(table.rows[i].cells[1].innerText);
+        email.push(table.rows[i].cells[2].innerText);
+    };
+	function myFunction() {
+        document.getElementById('clear').style.display = 'table-row'
+        var x = document.getElementById("search").value.toLowerCase();
+        var type = document.getElementById("select").value;
+        // alert(email)
+        if (type === '1'){
+            var u_searched = u_name.filter(name => name.toLowerCase().includes(x))
+            // document.getElementById('label').innerHTML = type+u_searched;
+            for (let j = 0; j < u_name.length; j++){
+                if (u_searched.includes(u_name[j])){
+                    document.getElementById(u_name[j]).style.display = 'table-row';
+                    document.getElementById('noitem').style.display = 'none';
+                }
+                if (!u_searched.includes(u_name[j])){
+                    document.getElementById(u_name[j]).style.display = 'none';
+                    document.getElementById('noitem').style.display = 'none';
+                }
+                if (u_searched.length === 0) {
+                    document.getElementById('noitem').style.display = 'table-row';
+                }
+                
+            }
+        }
+        else {
+            var e_searched = email.filter(name => name.toLowerCase().includes(x))
+            // document.getElementById('label').innerHTML = type+e_searched;
+
+            for (let j = 0; j < email.length; j++){
+                if (e_searched.includes(email[j])){
+                    document.getElementById(u_name[j]).style.display = 'table-row';
+                    document.getElementById('noitem').style.display = 'none';
+                }
+                if (!e_searched.includes(email[j])){
+                    document.getElementById(u_name[j]).style.display = 'none';
+                    document.getElementById('noitem').style.display = 'none';
+                }
+                if (e_searched.length === 0) {
+                    document.getElementById('noitem').style.display = 'table-row';
+                }
+                
+            }
+        }
+	}
+    function reset() {
+        document.getElementById('clear').style.display = 'none';
+        document.getElementById('search').value = '';
+        for (let j = 0; j < u_name.length; j++){
+            document.getElementById(u_name[j]).style.display = 'table-row';
+            document.getElementById('noitem').style.display = 'none';
+            
+        }
+    }
+	</script>
 {% endblock %}

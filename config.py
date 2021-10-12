@@ -1,7 +1,6 @@
 import credentials
 from os import path as op
 from dotenv import load_dotenv
-from flask import url_for, request
 
 dotenv_path = op.join(op.dirname(__file__), '.env')  # Path to .env file
 load_dotenv(dotenv_path)
@@ -16,15 +15,15 @@ class Config:
     SECURITY_SEND_REGISTER_EMAIL = False
     PYTHONDONTWRITEBYTECODE=1
 
-    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
-    MAIL_USE_TLS = False
-    MAIL_USE_SSL = True
+    MAIL_USE_TLS = True
+    MAIL_USE_SSL = False
 
     # gmail authentication
-    MAIL_USERNAME = 'autostock2021@gmail.com'
-    MAIL_PASSWORD = 'autostock@123'
+    MAIL_USERNAME = credentials.u_name
+    MAIL_PASSWORD = credentials.key
 
     # mail accounts
-    MAIL_DEFAULT_SENDER = 'autostock2021@gmail.com'
+    MAIL_DEFAULT_SENDER = credentials.u_name
 
