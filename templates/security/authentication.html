@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}
+Authentication
+{% endblock %}
+{% block content %}
+{% from 'security/_macros.html' import render_field_with_errors, render_field %}
+<h2>{{ _('Authentication') }}</h2>
+<br/>
+<div class="shadow p-3 mb-5 rounded bg-body">
+    <form method="POST">
+        {{ form.hidden_tag() }}
+    
+        {{ render_field_with_errors(form.code, class="form-control") }}
+        {{ render_field(form.submit, class="btn btn-secondary") }}
+
+        <button type="button" class="btn btn-primary" onclick="pageRedirect()" id="resend" name="resend" disabled>Resend</button>
+
+        
+    </form>
+    
+    </div>
+<style>
+    .inline {
+   display:inline-block;
+   margin-right:5px;
+}
+</style>
+<script>
+    window.onload = function() {
+    window.setTimeout(setDisabled, 25000);
+    }
+
+    function setDisabled() {
+        document.getElementById('resend').disabled = false;
+    }
+    function pageRedirect() {
+      window.location.href = "{{url_for('auth.resend', id = id, purpose='Authentication Resend')}}";
+    }
+</script>
+{% endblock %}

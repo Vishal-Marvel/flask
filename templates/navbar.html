@@ -1,0 +1,61 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" id="navbar">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('other.index') }}">Home</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('auth.instructions')}}">Add User</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('other.users')}}">View Users</a>
+        </li>
+
+      </ul>
+        {% if current_user.is_authenticated %}
+        <ul class="navbar-nav ml-auto mb-20 mb-lg-10">
+          <li class="nav-item dropdown" >
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true"><strong>{{current_user.name}}</strong>
+              </a>
+            <div class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="navbarDropdown" >
+              {% if current_user.has_role('admin') %}
+              <a class="dropdown-item" href=
+              "\admin ">
+              Admin Page</a>
+              {% endif %}
+              {% if not current_user.has_role('admin') %}
+              <a class="dropdown-item" href=
+              "{{ url_for('other.profile', name=current_user.id)}}">
+              Show Profile Page</a>
+
+              <a class="dropdown-item" href=
+              "{{url_for('auth.update', name=current_user.id)}}">
+              Edit Profile Page</a>
+              
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href=
+              "{{url_for('auth.reset')}}">
+              Reset Password</a>
+              {% endif %}
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href=
+              "{{ url_for_security('logout') }}">
+                Logout</a>
+            </div>
+          </li>
+        </ul>
+        {% else %}
+        <ul class="navbar-nav ml-auto mb-18 mb-lg-10">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for_security('login')}}"><strong>Login</strong></a>
+        </li>
+      </ul>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>

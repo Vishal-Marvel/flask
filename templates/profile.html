@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}
+User Profile
+{%endblock%}
+
+{% block content %}
+<h1>User Profile</h1>
+{% if current_user.id == user.id or current_user.has_role('admin') %}
+    <a href="{{url_for('auth.update', name=user.id)}}">(update)</a>
+    <br/>
+{% endif %}
+<br/>
+<div class="card mb-3" >
+    <div class="row g-0">
+      <div class="col-md-2">
+          {% if user.img %}
+                <img src="/static/user_images/{{ user.img }}" class="card-img">
+  
+          {% else %}
+                <img src="/static/Default-Profile.png" class="card-img">
+          {% endif %}
+      </div>
+      <div class="col-md-10">
+        <div class="card-body">
+            <form >
+                <div class="field">
+                    {{ form.name.label(class="form-label") }}
+                    <div class="control">
+                        <input class="form-control" value="{{user.name}}" readonly>
+                    </div>
+                </div>
+                <br/>
+                <div class="field">
+                    {{ form.email.label(class="form-label") }}
+                    <div class="control">
+                        <input class="form-control" value="{{user.email}}" readonly>
+                    </div>
+                </div>
+                <br/>
+                <div class="field">
+                    {{ form.ph_no.label(class="form-label") }}
+                    <div class="control">
+                        <input class="form-control" value="{{user.ph_no}}" readonly>
+                    </div>
+                </div>
+
+
+                <br/>
+            </form>
+          
+        </div>
+      </div>
+    </div>
+</div>
+<script>
+	// var imgSet = document.getElementsByTagName("img");
+	// var output = "";
+	// for (var i = 0; i< imgSet.length; i++) {
+	// 	output += "<p> Source for Image ";
+	// 	output += i+1;
+	// 	output += ": ";
+	// 	output += "<a href=";
+    //     output += imgSet[i].src;
+    //     output += " target=\"_blank\">"
+    //     output += imgSet[i].src;
+	// 	output += "<\/a><\/p>";		
+	// }
+	// document.write(output);
+    // window.open('http:localhost/static/new.gif', '_blank')
+</script>
+{% endblock %}

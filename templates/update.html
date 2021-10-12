@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Update Profile
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+<h1>Update User...</h1>
+<h5>User Added on: {{name_to_update.date_added}}</h5>
+
+	<a data-bs-toggle="modal" data-bs-target="#exampleModal"  href="{{ url_for('auth.delete', id=name_to_update.id) }}">(Delete)</a>	  
+	  <!-- Modal -->
+	  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title" id="exampleModalLabel">Confirmation</h5>
+			  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				Are you sure you want to delete?
+				<form action="{{ url_for('auth.delete', id=name_to_update.id) }}" method="POST">
+					<br/>
+					<input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password">
+					<br/>
+					<button type="submit" class="btn btn-primary" style="float: right;">Yes</button>
+				</form>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	  
+</div>
+	<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form action="{{url_for('auth.update', name=name_to_update.id)}}" method="POST" enctype="multipart/form-data">
+		{{ form.hidden_tag() }}
+
+		{{ form.name.label(class="form-label") }}
+
+		{{ form.name(class="form-control", value=name_to_update.name) }}
+		<br/>
+
+		{{ form.email.label(class="form-label") }}
+
+		<div class="control">
+			<input class="form-control" value="{{name_to_update.email}}" readonly>
+		</div>
+		<br/>
+		
+		{{ form.ph_no.label(class="form-label") }}
+
+		{{ form.ph_no(class="form-control", value=name_to_update.ph_no) }}
+		<br/>
+		
+		{{ form.img.label(class="form-label") }}
+		<br/>
+		{% if name_to_update.img %}
+			Current Image: <a href="/static/user_images/{{ name_to_update.img }}" target="_blank">{{ name_to_update.img }}</a> <input type="checkbox" name="clear"> Clear
+		{% else %}
+			Current Image: {{ name_to_update.img }}
+		{% endif %}
+		<br/>
+
+		{{ form.img(class="form-control", accept="image/x-png,image/gif,image/jpeg") }}
+		<br/>
+		{{ form.submit(class="btn btn-secondary") }}
+
+
+	</form>
+</div>
+
+
+{% endblock %}

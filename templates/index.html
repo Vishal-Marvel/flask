@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+	<h1>Welcome!!</h1>
+	<br/>
+	
+	<p>This is a Website just for learning purpose,<br/>And this website is still developing...</p><br/>
+	
+	<li>
+	You can <strong>Add A User</strong><br/>
+		Click <a href="{{ url_for('auth.instructions') }}">here</a> to Add User.
+	</li>
+	<br>
+	{% if not current_user.is_authenticated %}
+	<li>
+		You can <strong>Login</strong><br>Click <a href="{{ url_for('auth.login') }}">here</a> to Login.
+	</li>
+	<br>
+	{% endif %}
+	<li>
+	You can <strong>View Users</strong> <br>
+		Click <a href="{{ url_for('other.users') }}">here</a> to View Users.
+	</li>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% block title %}
+Reset Password
+{% endblock %}
+{% block content %}
+{% from 'security/_macros.html' import render_field_with_errors, render_field %}
+<h2>{{ _('Reset Password') }}</h2>
+<br/>
+<style>
+	.eye{
+		position: absolute;
+		right: 145px;
+		transform: translate(0, -50%);
+		top: 210px;
+		cursor: pointer;
+	}
+	.eye_1{
+		position: absolute;
+		right: 145px;
+		transform: translate(0, -50%);
+		top: 285px;
+		cursor: pointer;
+	}
+	.eye_2{
+		position: absolute;
+		right: 145px;
+		transform: translate(0, -50%);
+		top: 365px;
+		cursor: pointer;
+	}
+	.fa{
+		font-size: 20px;
+		}
+
+</style>
+<div class="shadow p-3 mb-5 rounded bg-body">
+<form action="{{ url_for('auth.reset') }}" method="POST">
+	{{ form.hidden_tag() }}
+
+	{{ render_field_with_errors(form.old_password, class="form-control autofocus", ) }}
+	<span class="eye"><i class="fa fa-eye" onclick="toggle()" id="eye"></i></span>
+
+    {{ render_field_with_errors(form.new_password, class="form-control") }}
+	<span class="eye_1"><i class="fa fa-eye" onclick="toggle_1()" id="eye_1"></i></span>
+
+	{{ render_field_with_errors(form.conform_new_password, class="form-control") }}
+	<span class="eye_2"><i class="fa fa-eye" onclick="toggle_2()" id="eye_2"></i></span>
+
+	{{ render_field(form.submit, class="btn btn-secondary") }}
+	
+</form>
+
+</div>
+<script>
+	var state = false;
+	var state_1 = false;
+	var state_2 = false;
+	function toggle(){
+		if(state){
+			document.getElementById(
+				"old_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye").setAttribute("class", "fa fa-eye")
+			state = false;
+		}
+		else{
+			document.getElementById(
+				"old_password").setAttribute("type","text");
+				
+			document.getElementById(
+				"eye").setAttribute("class", "fa fa-eye-slash")
+
+			state = true;
+		}
+		if(state){
+			document.getElementById(
+				"new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_1").setAttribute("class", "fa fa-eye")
+			state_1 = false;
+		}
+		if(state){
+			document.getElementById(
+				"conform_new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_2").setAttribute("class", "fa fa-eye")
+			state_2 = false;
+		}
+		
+	}
+	function toggle_1(){
+		if(state){
+			document.getElementById(
+				"old_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye").setAttribute("class", "fa fa-eye")
+			state = false;
+		}
+		if(state_1){
+			document.getElementById(
+				"new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_1").setAttribute("class", "fa fa-eye")
+			state_1 = false;
+		}
+		else{
+			document.getElementById(
+				"new_password").setAttribute("type","text");
+				
+			document.getElementById(
+				"eye_1").setAttribute("class", "fa fa-eye-slash")
+
+			state_1 = true;
+		}
+		if(state_2){
+			document.getElementById(
+				"conform_new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_2").setAttribute("class", "fa fa-eye")
+			state_2 = false;
+		}
+	}
+	function toggle_2(){
+		if(state){
+			document.getElementById(
+				"old_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye").setAttribute("class", "fa fa-eye")
+			state = false;
+		}
+		if(state_1){
+			document.getElementById(
+				"new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_1").setAttribute("class", "fa fa-eye")
+			state_1 = false;
+		}
+		if(state_2){
+			document.getElementById(
+				"conform_new_password").setAttribute("type","password");
+				
+			document.getElementById(
+				"eye_2").setAttribute("class", "fa fa-eye")
+			state_2 = false;
+		}
+		else{
+			document.getElementById(
+				"conform_new_password").setAttribute("type","text");
+				
+			document.getElementById(
+				"eye_2").setAttribute("class", "fa fa-eye-slash")
+
+			state_2 = true;
+		}
+	}
+</script>
+{% endblock %}

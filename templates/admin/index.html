@@ -1,0 +1,24 @@
+{% extends 'admin/master.html' %}
+
+{% block body %}
+  {{ super() }}
+  <div class='container'>
+      <div>
+          <div>
+              {% if current_user.has_role('admin') %}
+                <h1>Welcome!</h1>
+                <h3>You have successfully entered into the admin page.</h3>
+                <p>You can now access the Admin page.</p>
+              {% else %}
+                <h3>You Dont have any access here....</h3>
+                <br/><br/>
+                <!-- <h4>Automatically redirecting to home page...</h4>
+                
+                <h4>If not redirected click <a href="\">here</a></h4> -->
+              {% endif %}
+            
+          </div>
+      </div>
+  </div>
+
+{% endblock body %}

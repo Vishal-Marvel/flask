@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}
+Add User
+{% endblock %}
+{% block content %}
+<h1>Add User: </h1>
+<ul>
+    <li>
+        Email must be a <strong>valid email address</strong> so that you get a verification code to enter
+    </li>
+    <li>
+        Password must be <strong>minimum of 8 digits</strong>
+    </li>
+</ul>
+<a class="btn btn-primary" href="{{url_for('auth.add_user')}}">Proceed</a>
+{% endblock %}

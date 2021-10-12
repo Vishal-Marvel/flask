@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block content %}
+{% include '_messages.html' %}
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+<h1>Users: </h1>
+
+{% if our_users %}
+<form action="{{ url_for('other.users') }}" method="POST">
+	{{ form.hidden_tag() }}
+
+	<span id="select">Search By:</span>
+
+	{{ form.select() }} <a href="{{ url_for('other.users') }}">clear filters</a>
+	<br/>
+	{{ form.search.label(class="form-label") }}
+
+	{{ form.search(class="form-control", placeholder="Search") }}
+</form>
+<br>
+
+<table class="table table-hover table-bordered table-striped sortable" id="users">
+	
+	<colgroup>
+		<col span="1" style="width: 10%;">
+		<col span="1" style="width: 30%;">
+		<col span="1" style="width: 25%;">
+		<col span="1" style="width: 18%;">
+		<col span="1" style="width: auto;">
+	</colgroup>
+	<tr>
+		<td style="text-align:center"><strong>User ID</strong></td>
+		<td><strong>User Name</strong></td>
+		<td><strong>Email ID</strong></td>
+		<td><strong>Date Added</strong></td>
+		<td><strong>Actions</strong></td>
+	</tr>
+	{% if searched and users %}
+		{% for our_user in users %}
+		
+		<tr class="item">
+			<td style="text-align:center">{{ our_user.id }}</td>
+			<td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
+			<td>{{ our_user.email }}</td>
+			<td>{{ our_user.date_added }}</td>
+			<td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
+				<a href="{{url_for('auth.update', name=our_user.id)}}">Update</a>
+				<a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
+				<!-- Modal -->
+				 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
+				</div>
+				{%else%}
+				Login To do actions
+				{% endif %}
+			</td>
+		</tr>
+		{% endfor %}
+	{% elif searched and not users %}
+		<td colspan="999">
+			<div class="text-center">
+				No Items Match.
+			</div>
+		</td>
+	
+	{% elif not searched %}
+		{% for our_user in our_users %}
+		<tr class="item">
+			<td style="text-align:center">{{ our_user.id }}</td>
+			<td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
+			<td>{{ our_user.email }}</td>
+			<td>{{ our_user.date_added }}</td>
+			<td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
+				<a href="{{url_for('auth.update', name=our_user.id)}}" >Update</a> ,
+				<a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
+				 <!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
+				</div>
+				{%else%}
+				Login To do actions
+				{% endif %}
+				
+			</td>
+		</tr>
+		{% endfor %}
+	{% endif %}
+</table>
+
+{% else %}
+<h4>No Users <a href="{{ url_for('auth.instructions') }}">Add</a> One</h4>
+
+{% endif %}
+
+{% endblock %}
