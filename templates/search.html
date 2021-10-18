@@ -62,11 +62,13 @@ Users
             <a href="{{url_for('auth.update', name=our_user.id)}}">Update</a>
             <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=our_user.id)}}">Delete</a>
             <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=our_user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
             </div>
+            {%elif not current_user.is_authenticated%}
+            <a id='login' href="{{url_for_security('login')}}">Login</a> To do actions
             {%else%}
-            Login To do actions
+            No Access
             {% endif %}
         </td>
     </tr>
@@ -80,8 +82,13 @@ Users
 {% endif %}
 
 <script>
+    var url = new URL('http://localhost:5000/login')
+    url.searchParams.append('next', window.location.href)
+    document.getElementById('login').href = url
+</script>
+<script> 
     let table = document.getElementById('users');
-    const input_place = document.getElementById('border');
+    let input_place = document.getElementById('border');
     let u_name = []
     let email = []
     var length = table.rows.length;
@@ -95,8 +102,13 @@ Users
         tab.remove()
         input_place.insertAdjacentHTML('afterEnd', table.outerHTML)
         var tab = document.getElementById('users');
-        document.getElementById('clear').style.display = 'table-row'
         var x = document.getElementById("search").value.toLowerCase();
+        if (x.length > 0){
+            document.getElementById('clear').style.display = 'table-row'
+        }
+        else{
+            document.getElementById('clear').style.display = 'none'
+        }
         var type = document.getElementById("select").value;
         if (type === '1'){
             var u_searched = u_name.filter(name => name.toLowerCase().includes(x))
@@ -137,11 +149,8 @@ Users
     function reset() {
         document.getElementById('clear').style.display = 'none';
         document.getElementById('search').value = '';
-        for (let j = 0; j < u_name.length; j++){
-            document.getElementById(u_name[j]).style.display = 'table-row';
-            document.getElementById('noitem').style.display = 'none';
-            
+        document.getElementById('users').remove()
+        input_place.insertAdjacentHTML('afterEnd', table.outerHTML)
         }
-    }
 </script>
 {% endblock %}

@@ -5,13 +5,30 @@ User Profile
 {%endblock%}
 
 {% block content %}
+<style>
+    .center {
+        position: absolute;
+        left: 120px;
+        width: 80%;
+        padding: 10px;
+    }
+    </style>
 <h1>User Profile</h1>
 {% if current_user.id == user.id or current_user.has_role('admin') %}
     <a href="{{url_for('auth.update', name=user.id)}}">(update)</a>
+    <a data-bs-toggle="modal" data-bs-target="#exampleModal" href="{{url_for('auth.delete', id=user.id)}}">(Delete)</a>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('auth.delete', id=user.id) }}" method="POST"><br/><input autofocus class="form-control" type="password" id="passw" name="passw" placeholder="Password"><br/><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
+    </div>
+    </div>
+    <br/>
+{% else %}
+    <a href="{{url_for_security('login', name=user.email, next=request.referrer)}}">Login</a> to do actions
     <br/>
 {% endif %}
 <br/>
-<div class="card mb-3" >
+<div class="card mb-3 center" >
     <div class="row g-0">
       <div class="col-md-2">
           {% if user.img %}

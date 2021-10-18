@@ -24,7 +24,7 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
 
         if user:
-            flash(Markup(f"Email address already exists, click <a href='/login'>Login</a> to login"))
+            flash(Markup(f"Email address already exists, click <a href='/login?name={form.email.data}'>Login</a> to login"))
         else:
             n = generate_random()
             limit = set_activation_limt()
@@ -132,16 +132,14 @@ def login():
     # pass
     form = ExtLoginForm()
     if form.validate_on_submit():
-        next_url = request.form.get("next")
 
-        # print(f'\n\n{next_url}\n')
         email = form.email.data
         
         user = Users.query.filter_by(email=email).first()
         login_user(user)
-        if next_url:
-            return redirect(next_url)
-        return redirect(url_for('main.profile', name = current_user.id))
+        # if next_url:
+        #     return redirect(next_url)
+        # return redirect(url_for('main.profile', name = current_user.id))
 
     return render_template('security/login_user.html', login_user_form=form)
 

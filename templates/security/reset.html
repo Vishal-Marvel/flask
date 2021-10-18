@@ -7,25 +7,14 @@ Reset Password
 <h2>{{ _('Reset Password') }}</h2>
 <br/>
 <style>
+	.wrapper{
+		position: relative;
+	}
 	.eye{
 		position: absolute;
-		right: 145px;
+		right: 10px;
 		transform: translate(0, -50%);
-		top: 210px;
-		cursor: pointer;
-	}
-	.eye_1{
-		position: absolute;
-		right: 145px;
-		transform: translate(0, -50%);
-		top: 285px;
-		cursor: pointer;
-	}
-	.eye_2{
-		position: absolute;
-		right: 145px;
-		transform: translate(0, -50%);
-		top: 365px;
+		bottom: 0%;
 		cursor: pointer;
 	}
 	.fa{
@@ -36,15 +25,21 @@ Reset Password
 <div class="shadow p-3 mb-5 rounded bg-body">
 <form action="{{ url_for('auth.reset') }}" method="POST">
 	{{ form.hidden_tag() }}
+	
+	<div class="wrapper">
+		{{ render_field_with_errors(form.old_password, class="form-control autofocus", ) }}
+		<span class="eye"><i class="fa fa-eye" onclick="toggle()" id="eye"></i></span>
+	</div>
 
-	{{ render_field_with_errors(form.old_password, class="form-control autofocus", ) }}
-	<span class="eye"><i class="fa fa-eye" onclick="toggle()" id="eye"></i></span>
+	<div class="wrapper">
+		{{ render_field_with_errors(form.new_password, class="form-control") }}
+		<span class="eye"><i class="fa fa-eye" onclick="toggle_1()" id="eye_1"></i></span>
+	</div>
 
-    {{ render_field_with_errors(form.new_password, class="form-control") }}
-	<span class="eye_1"><i class="fa fa-eye" onclick="toggle_1()" id="eye_1"></i></span>
-
-	{{ render_field_with_errors(form.conform_new_password, class="form-control") }}
-	<span class="eye_2"><i class="fa fa-eye" onclick="toggle_2()" id="eye_2"></i></span>
+	<div class="wrapper">
+		{{ render_field_with_errors(form.conform_new_password, class="form-control") }}
+		<span class="eye"><i class="fa fa-eye" onclick="toggle_2()" id="eye_2"></i></span>
+	</div>
 
 	{{ render_field(form.submit, class="btn btn-secondary") }}
 	

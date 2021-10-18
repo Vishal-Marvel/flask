@@ -16,8 +16,6 @@ app = Flask(__name__)
 
 app.config.from_object(Config)
 
-res = Response()
-res.delete_cookie('username')
 #Initialize the database
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

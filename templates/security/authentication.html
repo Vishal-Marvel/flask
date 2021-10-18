@@ -26,13 +26,22 @@ Authentication
 }
 </style>
 <script>
-    window.onload = function() {
-    window.setTimeout(setDisabled, 25000);
-    }
-
     function setDisabled() {
         document.getElementById('resend').disabled = false;
     }
+	var timeLeft = 30;
+	var elem = document.getElementById('timer');
+	var timerId = setInterval(countdown, 1000);
+
+	function countdown() {
+		if (timeLeft == -1) {
+			clearTimeout(timerId);
+			setDisabled();
+		} else {
+			elem.innerHTML = 'You can resend in '+timeLeft+' secounds';
+			timeLeft--;
+		}
+	}
     function pageRedirect() {
       window.location.href = "{{url_for('auth.resend', id = id, purpose='Authentication Resend')}}";
     }

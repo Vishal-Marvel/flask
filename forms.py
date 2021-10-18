@@ -57,7 +57,7 @@ class SearchForm(FlaskForm):
 
 class ExtLoginForm(LoginForm):
 	email = StringField("Email:", validators=[DataRequired(), Email(message="Please enter a valid email address")])
-	password = PasswordField("Password", validators=[DataRequired()])
+	password = PasswordField("Password:", validators=[DataRequired()])
 	submit = SubmitField("Submit")
 
 class Forgotform(FlaskForm):
