@@ -1,8 +1,8 @@
-from datetime import datetime
+from datetime import date, datetime
 from flask import Blueprint, render_template, flash, request, url_for, redirect, Markup
 from models import Users
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_security import login_required, current_user, login_user, logout_user
+from flask_security import login_required, current_user, login_user, logout_user, url_for_security
 from werkzeug.utils import secure_filename
 from app import db, user_datastore, app
 from flask_security.utils import encrypt_password, verify_password
@@ -11,10 +11,6 @@ import os
 from func import set_activation_limt, generate_random, send_mail
 
 auth = Blueprint('auth', __name__)
-
-@auth.route('/user/add_instructions')
-def instructions():
-    return render_template('instructions.html')
 
 @auth.route('/user/add', methods=['GET', 'POST'])
 def add_user():
@@ -77,10 +73,17 @@ def resend(id, purpose):
     
     html = render_template('email.html', code=n, purpose=purpose)
     send_mail(user.email, html)
-    return redirect(url_for('auth.authenticate', id=user.id))
+    if 'Resend' in purpose:
+        purpose = str(purpose)
+        purpose = purpose.replace(' Resend', '')
+    if 'Authentication' in purpose or 'Reset' in purpose:
+        return redirect(url_for('auth.authenticate', id=user.id, purpose=purpose))
+    elif 'Forgot Password' in purpose:
+        return redirect(url_for('auth.forgot_password', id=id))
 
-@auth.route('/authenticate/<int:id>', methods=['POST','GET'])
-def authenticate(id):
+
+@auth.route('/authenticate/<int:id>/<purpose>', methods=['POST','GET'])
+def authenticate(id, purpose):
     form = AuthenticateForm()
     user = Users.query.get_or_404(id)
     if not user.is_user_active():
@@ -93,9 +96,12 @@ def authenticate(id):
                     user.activation_code = None
                     user.code_limit = None
                     db.session.commit()
-                    flash('User activated sucessfully')
-                    logout_user()
-                    return redirect(url_for('auth.login'))
+                    if 'Reset' in purpose:
+                        logout_user()
+                        flash('Password Resetted successfully, login again to continue')
+                        return redirect(url_for_security('login'))
+                    else:
+                        flash('User activated sucessfully')
                 else:
                     flash('Activation code expired')
 
@@ -106,6 +112,7 @@ def authenticate(id):
         return redirect(url_for('other.index'))
     return render_template('security/authentication.html',
     form=form,
+    purpose=purpose,
     id=id)
 
 @auth.route('/dynamic-authenticate', methods=['POST','GET'])
@@ -209,14 +216,18 @@ def forgot_password(id):
     user = Users.query.filter_by(id=id).first()
     if form.validate_on_submit():
         code = form.code.data
+        n = datetime.now()
         if code == user.activation_code:
-            new_pass = encrypt_password(form.new_password.data)
-            user.password = new_pass
-            db.session.commit()
-            logout_user()
-            return redirect(url_for('auth.login'))
+            if n <= user.code_limit:
+                new_pass = encrypt_password(form.new_password.data)
+                user.password = new_pass
+                db.session.commit()
+                logout_user()
+                return redirect(url_for('auth.login'))
+            else:
+                flash('Code expired')
         else:
-            flash('Activation code Incorrect')
+            flash('Code Incorrect')
             
     return render_template('security/forgot_reset_password.html', form=form, id=user.id)
 
@@ -230,15 +241,26 @@ def reset():
             user = Users.query.get_or_404(current_user.id)
             new_p = encrypt_password(form.new_password.data)
             user.password = new_p
+            user.activation_code = n = generate_random()
+            user.code_limit = set_activation_limt()
+            html = render_template('email.html', code=n, purpose='Reset Password Conformation')
+            send_mail(user.email, html)
+            user.active = False
             db.session.commit()
-            logout_user()
-            flash('Password resetted successfully, Login again to continue')
-            return redirect(url_for('auth.login'))
+            flash('Password resetted, Verification code sent to your email!')
+            return redirect(url_for('auth.authenticate', id=user.id, purpose='Reset Password'))
         else:
             flash('Old Password Incorrect')
             
     return render_template('security/reset.html', form=form)
 
+# @auth.route('/reset-conform', methods=['POST', 'GET'])
+# @login_required
+# def reset_conform():
+#     form = AuthenticateForm()
+#     user = current_user.id
+
+#     return render_template()
 
 @auth.route('/delete/<id>', methods=['POST', 'GET'])
 def delete(id):
