@@ -21,23 +21,6 @@ def profile(name):
 def users():
     form = SearchForm()
     full_users = list(Users.query.all())[1:]
-    if request.method == 'POST':
-        searched = form.search.data
-        search_by = form.select.data
-        if search_by == 'User Name':
-            users = list(Users.query.filter(Users.name.like('%' + searched + '%')))
-        elif search_by == 'Email Id':
-            users = list(Users.query.filter(Users.email.like('%' + searched + '%')))
-        for index, i in enumerate(users):
-            if i.id == 1:
-                del users[index]
-        if len(users):
-            users == None
-        # resulS
-        return render_template('search.html',
-        form=form,
-        our_users=full_users,
-        searched=searched,
-        users=users)
+    
 
     return render_template('search.html',form=form, our_users=full_users)

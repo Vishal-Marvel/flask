@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Add Post
+{% endblock %}
+
+{% block content %}
+{{ ckeditor.load() }}
+{% from 'security/_macros.html' import render_field_with_errors, render_field %}
+
+<h1>Add Post: </h1>
+
+<div class="shadow p-3 mb-5 rounded bg-body">
+<form method="POST" enctype="multipart/form-data" autocomplete="off">
+	{{ form.hidden_tag() }}
+    {{ render_field_with_errors(form.title, class="form-control") }}
+    
+    {{ render_field_with_errors(form.content, rows="5", class="form-control") }}
+
+
+	{{ render_field_with_errors(form.img, class="form-control" ,accept="image/x-png,image/gif,image/jpeg" ,type="file") }}
+
+	{{ render_field(form.submit, class="btn btn-secondary") }}
+</form>
+{{ckeditor.config(name='content')}}
+</div>
+
+
+{% endblock %}

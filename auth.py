@@ -20,7 +20,7 @@ def add_user():
         user = Users.query.filter_by(email=form.email.data).first()
 
         if user:
-            flash(Markup(f"Email address already exists, click <a href='/login?name={form.email.data}'>Login</a> to login"))
+            flash(Markup(f"Email address already exists, click <a href='/login?name={form.email.data}'>here</a> to login"))
         else:
             n = generate_random()
             limit = set_activation_limt()
@@ -101,9 +101,10 @@ def authenticate(id, purpose):
                         flash('Password Resetted successfully, login again to continue')
                         return redirect(url_for_security('login'))
                     else:
-                        flash('User activated sucessfully')
+                        flash('User activated sucessfully!!')
+                        return redirect(url_for_security('login'))
                 else:
-                    flash('Activation code expired')
+                    flash(Markup(f'Activation code expired, click <a href=\'/resend/{user.id}/{purpose}\'>here</a> to resend'))
 
             else:
                 flash('Activation code Incorrect')
@@ -134,7 +135,7 @@ def dynamic_auth():
         
     return render_template('security/forgot.html', form=form, purpose='Authentication')
 
-@auth.route('/login/', methods=['POST', 'GET'])
+@auth.route('/login', methods=['POST', 'GET'])
 def login():
     # pass
     form = ExtLoginForm()
@@ -143,7 +144,8 @@ def login():
         email = form.email.data
         
         user = Users.query.filter_by(email=email).first()
-        login_user(user)
+        login_user(user, remember=False)
+        flash('Logged in')
         # if next_url:
         #     return redirect(next_url)
         # return redirect(url_for('main.profile', name = current_user.id))
@@ -254,13 +256,6 @@ def reset():
             
     return render_template('security/reset.html', form=form)
 
-# @auth.route('/reset-conform', methods=['POST', 'GET'])
-# @login_required
-# def reset_conform():
-#     form = AuthenticateForm()
-#     user = current_user.id
-
-#     return render_template()
 
 @auth.route('/delete/<id>', methods=['POST', 'GET'])
 def delete(id):

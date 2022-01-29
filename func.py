@@ -21,6 +21,7 @@ def send_mail(to_mail, template):
         mes = MIMEMultipart()
         mes['From'] = credentials.u_name
         mes['To'] = to_mail
+        mes['Subject'] = 'Verification code'
         mes.attach(MIMEText(template, 'html'))
         msgBody = mes.as_string()
 

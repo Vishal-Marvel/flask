@@ -31,3 +31,6 @@ class UserModelView(AdminMixin, ModelView):
     column_searchable_list = ['name']
     create_modal = False
 
+class PostModelView(ModelView, AdminMixin):
+    column_list = ['id', 'title', 'poster_id']
+    create_model = False

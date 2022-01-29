@@ -1,7 +1,17 @@
+from flask import Markup, flash
+from flask_security import url_for_security
+from flask_security.utils import _, _datastore, config_value, get_message, \
+    localize_callback, url_for_security, validate_redirect_url, \
+    verify_and_update_password
+from flask_security.confirmable import requires_confirmation
+from flask_ckeditor import CKEditorField
+from werkzeug.utils import redirect
 from flask_wtf import FlaskForm
 from flask_security.forms import LoginForm, RegisterForm
 from wtforms import *
 from wtforms.validators import *
+from wtforms.widgets import *
+    
     ## Validators
     # DataRequired
     # Email
@@ -49,6 +59,12 @@ class UserForm(FlaskForm):
     img = FileField("Profile Photo")
     submit = SubmitField("Submit")
 
+class PostForm(FlaskForm):
+    title = StringField("Title*", validators=[DataRequired()])
+    content = CKEditorField("Content*", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+    img = FileField("Image")
+
 class SearchForm(FlaskForm):
     choices = ['User Name', 'Email Id']
     select = SelectField('Search by:', choices=choices)
@@ -56,9 +72,32 @@ class SearchForm(FlaskForm):
     submit = SubmitField("Submit")
 
 class ExtLoginForm(LoginForm):
-	email = StringField("Email:", validators=[DataRequired(), Email(message="Please enter a valid email address")])
-	password = PasswordField("Password:", validators=[DataRequired()])
-	submit = SubmitField("Submit")
+    email = StringField("Email:", validators=[DataRequired(), Email(message="Please enter a valid email address")])
+    password = PasswordField("Password:", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+    def validate(self):
+        if not super(LoginForm, self).validate():
+            return False
+
+        self.user = _datastore.get_user(self.email.data)
+
+        if self.user is None:
+            flash(Markup(f'User does not exists, click <a href=\'/user/add\'>here</a> to add user'))
+            return False
+        if not self.user.password:
+            self.password.errors.append(get_message('PASSWORD_NOT_SET')[0])
+            return False
+        if not verify_and_update_password(self.password.data, self.user):
+            self.password.errors.append(get_message('INVALID_PASSWORD')[0])
+            return False
+        if requires_confirmation(self.user):
+            self.email.errors.append(get_message('CONFIRMATION_REQUIRED')[0])
+            return False
+        if not self.user.is_active:
+            flash(Markup(f'User not activated, click <a href=\'dynamic-authenticate\'>here</a> to activate'))
+            return False
+        return True
 
 class Forgotform(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email(message="Please enter a valid email address")])

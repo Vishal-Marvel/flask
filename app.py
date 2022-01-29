@@ -9,6 +9,7 @@ from flask_security import SQLAlchemyUserDatastore, Security, logout_user
 from werkzeug.security import generate_password_hash
 import os.path as op
 from config import Config
+from flask_ckeditor import CKEditor
 
 # Create a Flask Instance
 
@@ -20,14 +21,15 @@ app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
+ckeditor = CKEditor(app)
 
 # Login manager
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'
 login_manager.init_app(app)
 
-from models import Users, Roles
-from admin import IndexView, UserModelView, MainIndexLink
+from models import Users, Roles, Posts
+from admin import IndexView, UserModelView, MainIndexLink, PostModelView
 from static_file_admin import FileAdmin
 
 # Instantiate Flask-Admin
@@ -38,6 +40,7 @@ admin.add_link(MainIndexLink(name="Home"))
 
 # Create Model Views
 admin.add_view(UserModelView(Users, db.session))
+admin.add_view(PostModelView(Posts, db.session))
 
 #Create Static view
 path = op.join(op.dirname(__file__), 'static')

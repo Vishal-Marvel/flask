@@ -30,13 +30,14 @@ Users
     <option value="1">User Name</option>
     <option value="2">Email Id </option>
 </select>
+<br>
 <div class="wrapper">
-{{ form.search.label(class="form-label") }}
+<br>
 <span id="clear" class="clear"><i class="fa fa-times" onclick="reset()"></i></span>
+<input type="text" id="search" class="form-control" placeholder="Search" autocomplete="off" oninput="myFunction()">
+
 </div>
 
-
-<input type="text" id="search" class="form-control" placeholder="Search" autocomplete="off" oninput="myFunction()">
 <br id="border">
 
 <table class="table table-hover table-bordered table-striped sortable" id="users">

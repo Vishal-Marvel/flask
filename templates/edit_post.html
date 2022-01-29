@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Edit Post
+{% endblock %}
+
+{% block content %}
+
+{% from 'security/_macros.html' import render_field_with_errors, render_field %}
+
+
+
+<h2>Edit Post...</h2>
+<br/>
+<div class="shadow p-3 mb-5 bg-body rounded">
+	<form method="POST" action="{{url_for('post.edit_post', id=post.id)}}" enctype="multipart/form-data">
+		{{ form.hidden_tag() }}
+
+		{{ form.title.label(class="form-label") }}
+
+		{{ form.title(class="form-control", value=post.title) }}
+		<br>
+		{{ form.content.label(class="form-label") }}
+
+		{{ form.content(class="form-control") }}
+		<br/>
+		{% if post.img %}
+			Current Image: <a href="/static/posts/{{ post.img }}" target="_blank">{{ post.img }}</a> <input type="checkbox" name="clear"> Clear
+		{% else %}
+			Current Image: {{ post.img }}
+		{% endif %}
+		<br/>
+		{{ form.img(class="form-control", accept="image/x-png,image/gif,image/jpeg") }}
+		<br>
+		{{ form.submit(class="btn btn-secondary") }}
+
+
+	</form>
+	{{ ckeditor.load() }}
+ 	{{ ckeditor.config(name='content') }}
+
+	
+</div>
+
+<a href="{{ url_for('post.posts')}}" class="btn btn-outline-secondary btn-sm">Back To Blog</a>
+
+
+
+{% endblock %}

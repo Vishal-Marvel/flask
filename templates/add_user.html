@@ -24,24 +24,24 @@ Add User
 </style>
 <h1>Add User: </h1>
 <ul>
-
-
-</ul>
-<div class="shadow p-3 mb-5 rounded bg-body">
-<form method="POST" enctype="multipart/form-data">
-	{{ form.hidden_tag() }}
-
-	{{ render_field_with_errors(form.name, class="form-control") }}
 	<li>
         Email must be a <strong>valid email address</strong> so that you get a verification code to enter.
     </li>
-	<br>
-	{{ render_field_with_errors(form.email, class="form-control") }}
-	
-	{{ render_field_with_errors(form.ph_no, class="form-control") }}
 	<li>
-        Password must be <strong>minimum of 8 digits</strong>.
+        Password must be <strong>minimum of 8 characters</strong>.
     </li>
+</ul>
+<div class="shadow p-3 mb-5 rounded bg-body">
+<form method="POST" enctype="multipart/form-data" autocomplete="off">
+	{{ form.hidden_tag() }}
+
+	{{ render_field_with_errors(form.name, class="form-control", autocomplete="off") }}
+	
+	<br>
+	{{ render_field_with_errors(form.email, class="form-control", autocomplete="off") }}
+	
+	{{ render_field_with_errors(form.ph_no, class="form-control", autocomplete="off", type='number') }}
+
 	<br>
 	<div class="wrapper">
 		{{ render_field_with_errors(form.passw, class="form-control") }}
@@ -50,7 +50,7 @@ Add User
 
 	<div class="wrapper">
 		{{ render_field_with_errors(form.confrm_passw, class="form-control") }}
-		<span class="eye"><i class="fa fa-eye" onclick="toggle_1()" id="eye_1"></i></span>
+		<span class="eye"><i class="fa fa-eye" onclick="toggle()" id="eye_1"></i></span>
 	</div>
 
 	{{ render_field_with_errors(form.img, class="form-control" ,accept="image/x-png,image/gif,image/jpeg" ,type="file") }}
@@ -89,47 +89,14 @@ Add User
 			document.getElementById(
 				"eye_1").setAttribute("class", "fa fa-eye-slash")
 
-			state_1 = true;
-		}
-	}
-	function toggle_1(){
-		if(state){
-			document.getElementById(
-				"passw").setAttribute("type","password");
-			document.getElementById(
-				"eye").setAttribute("class", "fa fa-eye")
-			state = false;
-		}
-		else{
 			document.getElementById(
 				"passw").setAttribute("type","text");
 			document.getElementById(
 				"eye").setAttribute("class", "fa fa-eye-slash")
-			state = true;
-		}
-		if(state_1){
-			document.getElementById(
-				"confrm_passw").setAttribute("type","password");
-			document.getElementById(
-				"eye_1").setAttribute("class", "fa fa-eye")
-			state_1 = false;
-		}
-		else{
-			document.getElementById(
-				"confrm_passw").setAttribute("type","text");
-			document.getElementById(
-				"eye_1").setAttribute("class", "fa fa-eye-slash")
 
 			state_1 = true;
 		}
 	}
-	// var url = window.location()
-	// window.write(url)
-	var array1 = [1,2,3]
-	
-	var car = 123;
-	var num = toString(123);
-
 </script>
 
 {% endblock %}

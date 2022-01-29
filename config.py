@@ -13,6 +13,7 @@ class Config:
     SECURITY_PASSWORD_SALT = 'aslkj909'
     SECURITY_PASSWORD_HALT = 'sha256_crypt'
     SECURITY_SEND_REGISTER_EMAIL = False
+    SECURITY_MSG_DISABLED_ACCOUNT = ('Account is', 'error')
     PYTHONDONTWRITEBYTECODE=1
 
     MAIL_SERVER = 'smtp.gmail.com'
