@@ -1,6 +1,6 @@
 from app import app, db
-import pymysql
-pymysql.install_as_MySQLdb()
+# import pymysql
+# pymysql.install_as_MySQLdb()
 
 # Import blueprint
 from other import other

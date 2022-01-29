@@ -80,5 +80,11 @@ def page_not_found(e):
 def page_not_found(e):
     return render_template("500.html"), 500
 
+from other import other
+from auth import auth
+from post_auth import post
 
+app.register_blueprint(other)
+app.register_blueprint(auth)
+app.register_blueprint(post)
 # app.run()
