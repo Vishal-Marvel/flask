@@ -12,23 +12,30 @@
         margin-bottom: 10px;
         max-width: 600px;
     }
+    .center {
+        position: absolute;
+        left: 120px;
+        width: 80%;
+        padding: 10px;
+    }
     </style>
 <h1>{{post.title}}</h1>
 {% if post.poster_id == current_user.id or current_user.has_role('admin') %}
     <a href="{{ url_for('post.edit_post', id=post.id)}}" class="btn btn-outline-secondary btn-sm">Edit Post</a>
 
-	<a href="{{ url_for('post.delete_post', id=post.id)}}" class="btn btn-outline-danger btn-sm">Delete Post</a>
-
-    <br/>
+	<a data-bs-toggle="modal" data-bs-target="#exampleModal" class="btn btn-outline-secondary btn-sm" href="{{url_for('post.delete_post', id=post.id)}}">Delete</a>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Confirmation</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body">Are you sure you want to delete?<form action="{{ url_for('post.delete_post', id=post.id) }}" method="POST"><button type="submit" class="btn btn-primary" style="float: right;">Yes</button></form></div></div></div></div>
+    </div>
 {% endif %}
 <br/>
-<div class="card">
+<div class="card center">
     <div class="card-body">
       <h5 class="card-title">{{post.title}}</h5>
       <p class="card-text">By: {{ post.poster.name }}</p>
-      <p class="card-text"><small class="text-muted">Posted: {{post.date_posted}} </small></p>
-    
-      <div class="p-3 mb-5 bg-body rounded">
+      <p class="card-text"><small class="text-muted">Posted: {{post.date_posted}} </small></p>    
+      <div class="p-2">
         {{ post.content|safe }}
         </div>
     </div>
@@ -36,5 +43,5 @@
         <img src="/static/posts/{{ post.img }}" class="card-img-bottom" alt="Image" >
 
     {% endif %}
-  </div>
+</div>
 {% endblock %}

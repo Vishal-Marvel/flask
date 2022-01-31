@@ -76,8 +76,11 @@ def edit_post(id):
 		
 @post.route('/posts', methods=['GET', 'POST'])
 def posts():
-	posts = Posts.query.order_by(Posts.date_posted)
-	return render_template('posts.html', posts=posts)
+	posts = list(Posts.query.order_by(Posts.date_posted))
+	if len(posts) > 0:
+		return render_template('posts.html', posts=posts)
+	else:
+		return render_template('posts.html')
 
 @post.route('/posts/<int:id>')
 def view_post(id):
@@ -85,12 +88,12 @@ def view_post(id):
 	return render_template('post.html', post=post)
 
 
-@post.route('/posts/delete/<int:id>')
+@post.route('/posts/delete/<int:id>', methods=['POST', 'GET'])
 @login_required
 def delete_post(id):
 	post_to_delete = Posts.query.get_or_404(id)
 	id = current_user.id
-	if id == post_to_delete.poster.id:
+	if id == post_to_delete.poster.id or current_user.has_role('admin'):
 		try:
 			db.session.delete(post_to_delete)
 			db.session.commit()
