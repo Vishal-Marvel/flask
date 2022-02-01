@@ -13,7 +13,7 @@ sql = 'sqlite:///users.db'
 key = "my super secret key that no one is supposed to know"
 
 u_name = 'autostock2021@gmail.com'
-passw = 'autostock@123'
+passw = 'ygyytagsmjzhwqat'
 
 # https://www.youtube.com/watch?v=NYWEf9bZhHQ
 # https://ckraczkowsky.medium.com/building-a-secure-admin-interface-with-flask-admin-and-flask-security-13ae81faa05
