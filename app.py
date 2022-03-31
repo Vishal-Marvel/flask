@@ -87,4 +87,5 @@ from post_auth import post
 app.register_blueprint(other)
 app.register_blueprint(auth)
 app.register_blueprint(post)
-# app.run()
+
+# app.run(host='0.0.0.0', post=4000)
