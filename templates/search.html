@@ -86,11 +86,7 @@ Users
 
 {% endif %}
 
-<script>
-    var url = Flask.url_for_security('login')
-    url.searchParams.append('next', window.location.href)
-    document.getElementById('login').href = url
-</script>
+
 <script> 
     let table = document.getElementById('users');
     let input_place = document.getElementById('border');
