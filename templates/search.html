@@ -87,7 +87,7 @@ Users
 {% endif %}
 
 <script>
-    var url = new URL('{{ url_for_security("login") }}')
+    var url = Flask.url_for_security('login')
     url.searchParams.append('next', window.location.href)
     document.getElementById('login').href = url
 </script>

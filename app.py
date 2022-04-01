@@ -10,6 +10,9 @@ from werkzeug.security import generate_password_hash
 import os.path as op
 from config import Config
 from flask_ckeditor import CKEditor
+from flask_jsglue import JSGlue
+
+
 
 # Create a Flask Instance
 
@@ -22,6 +25,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 mail = Mail(app)
 ckeditor = CKEditor(app)
+jsglue = JSGlue(app)
 
 # Login manager
 login_manager = LoginManager()
