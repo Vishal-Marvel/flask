@@ -4,7 +4,8 @@ import os
 sql = os.environ.get('DATABASE_URL')
 # import os
 
-
+if sql.startswith("postgres://"):
+    sql = sql.replace("postgres://", "postgresql://", 1)
 # sql = os.getenv("DATABASE_URL")  # or other relevant config var
 # if sql.startswith("postgres://"):
 #     sql = sql.replace("postgres://", "postgresql://", 1)
