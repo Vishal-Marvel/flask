@@ -5,14 +5,70 @@ Login
 {% block content %}
 {% if not current_user.is_authenticated %}
 {% from 'security/_macros.html' import render_field_with_errors, render_field %}
-<h2>{{ _('Login') }}</h2>
+
 <br/>
+
+<style>
+*::before, *::after, * {
+      box-sizing: border-box;
+    }
+
+    .strength-meter {
+      position: relative;
+      height: 1rem;
+      width: 90%;
+      border: 3px solid hsla(14, 92%, 9%, 0.226);
+      border-radius: 1rem;
+      margin: 0 auto;
+    }
+
+    .strength-meter::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      height: 100%;
+      width: calc(1% * var(--strength, 0));
+      background-color: hsla(17, 65%, 25%, 0.493);
+
+      transition: width 200ms;
+    }
+
+    .password-input {
+      margin-top: 1rem;
+      width: 90%;
+      padding: .25rem .75rem;
+      background-color: hsl(261, 88%, 25%);
+      color: white;
+      border: 1px solid hsl(261, 88%, 57%);
+      outline: none;
+      text-align: center;
+      border-radius: .3rem;
+    }
+
+    .password-input:focus {
+      border-color: hsl(261, 88%, 70%);
+    }
+
+    .reasons > * {
+      margin-top: .5rem;
+      color: hsl(240, 4%, 5%);
+    }
+	.shadow{
+		margin-left: 25%;
+		width: 50%;
+	}
+}
+</style>
 <div class="shadow p-3 mb-5 rounded bg-body">
 <form action="{{ url_for_security('login') }}" method="POST" name="login_user_form" autocomplete="off">
 	{{ login_user_form.hidden_tag() }}
 
 	{{ render_field_with_errors(login_user_form.email, class="form-control", id="email") }}
-	{{ render_field_with_errors(login_user_form.password, class="form-control") }}
+	
+	{{ render_field_with_errors(login_user_form.password, class="form-control", id="password-input") }}
+	<div class="strength-meter" id="strength-meter"></div>
+	<ul><div id="reasons" class="reasons" ></div></ul>
+	<br>
 	<a href="{{ url_for('auth.forgot') }}">Forgot Password?</a>
 	<br><br>
 	{{ render_field(login_user_form.submit, class="btn btn-secondary") }}
@@ -32,8 +88,101 @@ Login
 	const urlParam = new URLSearchParams(window.location.search);
 	var names = urlParam.get('name');
 	document.getElementById('email').value = names;
-	// var url = new URL(window.location.href);
+	
+	const strengthMeter = document.getElementById('strength-meter')
+	const passwordInput = document.getElementById('password-input')
+	const reasonsContainer = document.getElementById('reasons')
 
-	// url.searchParams.append('next', request.referrer)
+	passwordInput.addEventListener('input', updateStrengthMeter)
+	updateStrengthMeter()
+
+	function updateStrengthMeter() {
+	const weaknesses = calculatePasswordStrength(passwordInput.value)
+
+	let strength = 100
+	reasonsContainer.innerHTML = ''
+	weaknesses.forEach(weakness => {
+		if (weakness == null) return
+		strength -= weakness.deduction
+		const messageElement = document.createElement('div')
+		messageElement.innerText = weakness.message
+		reasonsContainer.appendChild(messageElement)
+	})
+	strengthMeter.style.setProperty('--strength', strength)
+	}
+
+	function calculatePasswordStrength(password) {
+	const weaknesses = []
+	weaknesses.push(lengthWeakness(password))
+	weaknesses.push(lowercaseWeakness(password))
+	weaknesses.push(uppercaseWeakness(password))
+	weaknesses.push(numberWeakness(password))
+	weaknesses.push(specialCharactersWeakness(password))
+	weaknesses.push(repeatCharactersWeakness(password))
+	return weaknesses
+	}
+
+	function lengthWeakness(password) {
+	const length = password.length
+
+	if (length <= 5) {
+		return {
+		message: 'Your password is too short',
+		deduction: 40
+		}
+	}
+
+	if (length <= 10) {
+		return {
+		message: 'Your password could be longer',
+		deduction: 15
+		}
+	}
+	}
+
+	function uppercaseWeakness(password) {
+	return characterTypeWeakness(password, /[A-Z]/g, 'uppercase characters')
+
+	}
+
+	function lowercaseWeakness(password) {
+	return characterTypeWeakness(password, /[a-z]/g, 'lowercase characters')
+	}
+
+	function numberWeakness(password) {
+	return characterTypeWeakness(password, /[0-9]/g, 'numbers')
+	}
+
+	function specialCharactersWeakness(password) {
+	return characterTypeWeakness(password, /[^0-9a-zA-Z\s]/g, 'special characters')
+	}
+
+	function characterTypeWeakness(password, regex, type) {
+	const matches = password.match(regex) || []
+
+	if (matches.length === 0) {
+		return {
+		message: `Your password has no ${type}`,
+		deduction: 20
+		}
+	}
+
+	if (matches.length <= 2) {
+		return {
+		message: `Your password could use more ${type}`,
+		deduction: 5
+		}
+	}
+	}
+
+	function repeatCharactersWeakness(password) {
+	const matches = password.match(/(.)\1/g) || []
+	if (matches.length > 0) {
+		return {
+		message: 'Your password has repeat characters',
+		deduction: matches.length * 10
+		}
+	}
+	}
 </script>
 {% endblock %}
