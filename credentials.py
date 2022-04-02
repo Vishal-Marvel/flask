@@ -1,7 +1,7 @@
 import os
 # sql = 'mysql://python:python_sql@localhost/users'
-# sql = 'sqlite:///users.db'
-sql = os.environ.get('DATABASE_URL')
+sql = 'sqlite:///users.db'
+# sql = 'postgresql://agnzijncvhzwlp:ce33999773a480429519f3b6fc8eefae6791381e88a09853314f1649d3952780@ec2-52-73-155-171.compute-1.amazonaws.com:5432/dfimbv1oiootbf'
 # import os
 
 if sql.startswith("postgres://"):
