@@ -1,5 +1,7 @@
+import os
 # sql = 'mysql://python:python_sql@localhost/users'
-sql = 'sqlite:///users.db'
+# sql = 'sqlite:///users.db'
+sql = os.environ.get('DATABASE_URL')
 # import os
 
 

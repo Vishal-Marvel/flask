@@ -12,8 +12,6 @@ from config import Config
 from flask_ckeditor import CKEditor
 from flask_jsglue import JSGlue
 
-
-
 # Create a Flask Instance
 
 app = Flask(__name__)
@@ -87,9 +85,10 @@ def page_not_found(e):
 from other import other
 from auth import auth
 from post_auth import post
+from commands import create_tables
 
 app.register_blueprint(other)
 app.register_blueprint(auth)
 app.register_blueprint(post)
-
+app.cli.add_command(create_tables)
 # app.run(host='0.0.0.0', post=4000)
