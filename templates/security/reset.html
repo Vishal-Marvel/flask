@@ -20,14 +20,47 @@ Reset Password
 	.fa{
 		font-size: 20px;
 		}
+	.center {
+	margin: auto;
+	width: 60%;
+	border: 5px;
+	padding: 10px;
+	}
+	meter {
+
+	margin: 0 auto 1em;
+	width: 100%;
+	height: 0.75em;
+	display:none;
+	/* Applicable only to Firefox */
+	background: none;
+	background-color: rgba(175, 23, 23, 0.1);
+	}
+
+	meter::-webkit-meter-bar {
+	background: none;
+	background-color: rgba(0, 0, 0, 0.1);
+	}
+	/* Webkit based browsers */
+	meter[value="1"]::-webkit-meter-optimum-value { background: red; }
+	meter[value="2"]::-webkit-meter-optimum-value { background: yellow; }
+	meter[value="3"]::-webkit-meter-optimum-value { background: orange; }
+	meter[value="4"]::-webkit-meter-optimum-value { background: green; }
+
+	/* Gecko based browsers */
+	meter[value="1"]::-moz-meter-bar { background: red; }
+	meter[value="2"]::-moz-meter-bar { background: yellow; }
+	meter[value="3"]::-moz-meter-bar { background: orange; }
+	meter[value="4"]::-moz-meter-bar { background: green; }
 
 </style>
-<div class="shadow p-3 mb-5 rounded bg-body">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
+<div class="shadow p-3 mb-5 rounded bg-body center">
 <form action="{{ url_for('auth.reset') }}" method="POST">
 	{{ form.hidden_tag() }}
 	
 	<div class="wrapper">
-		{{ render_field_with_errors(form.old_password, class="form-control autofocus", ) }}
+		{{ render_field_with_errors(form.old_password, class="form-control autofocus") }}
 		<span class="eye"><i class="fa fa-eye" onclick="toggle()" id="eye"></i></span>
 	</div>
 
@@ -35,12 +68,16 @@ Reset Password
 		{{ render_field_with_errors(form.new_password, class="form-control") }}
 		<span class="eye"><i class="fa fa-eye" onclick="toggle_1()" id="eye_1"></i></span>
 	</div>
-
+	<meter max="4" id="password-strength-meter"></meter>
+	<p id="password-strength-text"></p>
+	<br>
 	<div class="wrapper">
 		{{ render_field_with_errors(form.conform_new_password, class="form-control") }}
 		<span class="eye"><i class="fa fa-eye" onclick="toggle_2()" id="eye_2"></i></span>
 	</div>
-
+	
+	<strong><p id="message"></p></strong>
+	<br>
 	{{ render_field(form.submit, class="btn btn-secondary") }}
 	
 </form>
@@ -68,33 +105,11 @@ Reset Password
 
 			state = true;
 		}
-		if(state){
-			document.getElementById(
-				"new_password").setAttribute("type","password");
-				
-			document.getElementById(
-				"eye_1").setAttribute("class", "fa fa-eye")
-			state_1 = false;
-		}
-		if(state){
-			document.getElementById(
-				"conform_new_password").setAttribute("type","password");
-				
-			document.getElementById(
-				"eye_2").setAttribute("class", "fa fa-eye")
-			state_2 = false;
-		}
+
 		
 	}
 	function toggle_1(){
-		if(state){
-			document.getElementById(
-				"old_password").setAttribute("type","password");
-				
-			document.getElementById(
-				"eye").setAttribute("class", "fa fa-eye")
-			state = false;
-		}
+
 		if(state_1){
 			document.getElementById(
 				"new_password").setAttribute("type","password");
@@ -112,32 +127,9 @@ Reset Password
 
 			state_1 = true;
 		}
-		if(state_2){
-			document.getElementById(
-				"conform_new_password").setAttribute("type","password");
-				
-			document.getElementById(
-				"eye_2").setAttribute("class", "fa fa-eye")
-			state_2 = false;
-		}
 	}
 	function toggle_2(){
-		if(state){
-			document.getElementById(
-				"old_password").setAttribute("type","password");
 				
-			document.getElementById(
-				"eye").setAttribute("class", "fa fa-eye")
-			state = false;
-		}
-		if(state_1){
-			document.getElementById(
-				"new_password").setAttribute("type","password");
-				
-			document.getElementById(
-				"eye_1").setAttribute("class", "fa fa-eye")
-			state_1 = false;
-		}
 		if(state_2){
 			document.getElementById(
 				"conform_new_password").setAttribute("type","password");
@@ -156,5 +148,45 @@ Reset Password
 			state_2 = true;
 		}
 	}
+	
+	var strength = {
+	0: "Worst",
+	1: "Bad",
+	2: "Weak",
+	3: "Good",
+	4: "Strong"
+	}
+	var password = document.getElementById('new_password');
+	var meter = document.getElementById('password-strength-meter');
+	var text = document.getElementById('password-strength-text');
+
+	var confm_pass = document.getElementById('conform_new_password');
+	var msg = document.getElementById('message');
+
+	password.addEventListener('input', function() {
+	var val = password.value;
+	var result = zxcvbn(val);
+
+	// Update the password strength meter
+	meter.value = result.score;
+
+	// Update the text indicator
+	if (val !== "") {
+		text.innerHTML = "Strength: " + strength[result.score]; 
+		meter.style.display = "block";
+	} else {
+		text.innerHTML = "";
+		meter.style.display = "none";
+	}
+	});
+
+	confm_pass.addEventListener('input', function(){
+		if (password.value !== confm_pass.value){
+			message.innerHTML = "Passwords are not same";
+		}
+		else{
+			msg.innerHTML = "";
+		}
+	});
 </script>
 {% endblock %}
