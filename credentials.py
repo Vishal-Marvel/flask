@@ -1,5 +1,5 @@
 import os
-sql = 'sqlite:///users.db'
+sql = os.environ.get('DATABASE_URL')
 
 if sql.startswith("postgres://"):
     sql = sql.replace("postgres://", "postgresql://", 1)
