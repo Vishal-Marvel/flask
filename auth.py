@@ -60,7 +60,7 @@ def add_user():
             name = form.name.data
             form = UserForm(formdata=None)
             flash(Markup(f"User '{name}' Added Successfully, check your mail to activate user"))
-            return redirect(url_for('auth.authenticate', id=user.id))
+            return redirect(url_for('auth.authenticate', id=user.id, purpose="Activation"))
     return render_template("add_user.html",
      form=form)
 
