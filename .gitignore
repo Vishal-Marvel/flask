@@ -1,3 +1,4 @@
+.gitignore
 __pycache__
 virtual
 static/user_images

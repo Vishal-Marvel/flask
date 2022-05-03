@@ -13,6 +13,7 @@ User Profile
         padding: 10px;
     }
     </style>
+{%if current_user.is_authenticated%}
 <h1>User Profile</h1>
 {% if current_user.id == user.id or current_user.has_role('admin') %}
     <a href="{{url_for('auth.update', name=user.id)}}">(update)</a>
@@ -70,6 +71,9 @@ User Profile
       </div>
     </div>
 </div>
+{%else%}
+<h3>You cannot view this page</h3>
+{%endif%}
 <script>
 	// var imgSet = document.getElementsByTagName("img");
 	// var output = "";

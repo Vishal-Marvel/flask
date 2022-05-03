@@ -6,6 +6,11 @@
 
 {% block content %}
 <style>
+    .fa{
+        font-size: 20px;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
     .card-img-bottom{
         padding: auto;
         margin-left: 20px;
@@ -17,6 +22,9 @@
         left: 120px;
         width: 80%;
         padding: 10px;
+    }
+    .likes-comments{
+        position: relative;
     }
     </style>
 <h1>{{post.title}}</h1>
@@ -43,5 +51,21 @@
         <img src="/static/posts/{{ post.img }}" class="card-img-bottom" alt="Image" >
 
     {% endif %}
+
+    <div class="likes-comments">
+{% if current_user.is_authenticated %}
+    {% if current_user.has_liked_post(post) %}
+    <a href="{{ url_for('post.like_action', post_id=post.id, action='unlike') }}">
+        <span><i class="fa fa-thumbs-up" aria-hidden="true"></i></span>
+    </a>
+  {% else %}
+    <a href="{{ url_for('post.like_action', post_id=post.id, action='like') }}">
+        <span><i class="fa fa-thumbs-o-up" aria-hidden="true"></i></span>
+    </a>
+  {% endif %}
+  {% else %}
+  <a href="{{ url_for_security('login')}}">Login</a> to like <br>
+{%endif%}
+{{ post.likes.count() }} likes
 </div>
 {% endblock %}

@@ -87,7 +87,18 @@ def view_post(id):
 	post = Posts.query.get_or_404(id)
 	return render_template('post.html', post=post)
 
-
+@post.route('/like/<int:post_id>/<action>')
+@login_required
+def like_action(post_id, action):
+    post = Posts.query.filter_by(id=post_id).first_or_404()
+    if action == 'like':
+        current_user.like_post(post)
+        db.session.commit()
+    if action == 'unlike':
+        current_user.unlike_post(post)
+        db.session.commit()
+    return redirect(request.referrer)
+	
 @post.route('/posts/delete/<int:id>', methods=['POST', 'GET'])
 @login_required
 def delete_post(id):

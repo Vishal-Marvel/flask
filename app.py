@@ -25,6 +25,7 @@ mail = Mail(app)
 ckeditor = CKEditor(app)
 jsglue = JSGlue(app)
 
+
 # Login manager
 login_manager = LoginManager()
 login_manager.login_view = 'auth.login'

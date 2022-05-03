@@ -60,8 +60,8 @@ Users
     
     <tr class="item" id="{{our_user.name}}">
         <td style="text-align:center">{{ our_user.id -1 }}</td>
-        <td><a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}</a></td>
-        <td>{{ our_user.email }}</td>
+        <td>{% if current_user.is_authenticated %}<a href='{{url_for("other.profile", name=our_user.id)}}'>{{ our_user.name }}{%else%}{{ our_user.name }}{%endif%}</a></td>
+        <td>{% if current_user.is_authenticated %}{{ our_user.email }}{%else%}You Cant See Me{%endif%}</td>
         <td>{{ our_user.date_added }}</td>
         <td>{% if our_user.id == current_user.id or current_user.has_role('admin') %}
             <a href="{{url_for('auth.update', name=our_user.id)}}">Update</a>
