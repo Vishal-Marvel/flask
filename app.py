@@ -1,6 +1,7 @@
 from flask import Flask, render_template, flash, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, current_user
+import sqlalchemy
 from flask_admin import Admin
 from forms import ExtLoginForm
 from flask_migrate import Migrate
@@ -56,10 +57,10 @@ security = Security(app, user_datastore, login_form=ExtLoginForm)
 
 @app.before_first_request
 def create_user():
-    user = Users.query.filter_by(email='admin@admin.com').first()
-
-    if not user:
-        db.drop_all()
+    try:
+        user = Users.query.filter_by(email='admin@admin.com').first()
+    except:
+        db.create_all()
         db.create_all()
         user_datastore.create_user(email='admin@admin.com', password='admin', name='admin')
         role = user_datastore.create_role(name='admin')
@@ -69,6 +70,9 @@ def create_user():
         user = Users.query.filter_by(email='admin@admin.com').first()
         user_datastore.add_role_to_user(user, role)
         db.session.commit()
+    
+
+
 
 @login_manager.user_loader
 def load_user(user_id):
